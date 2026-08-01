@@ -275,12 +275,11 @@
       <input type="text" id="alertKeywords" placeholder="Alert keywords (e.g. Fed, Rate, Earnings)..." onchange="saveAlertKeywords()">
       <button class="btn-alert" onclick="enableNotifications()">🔔 Alerts</button>
       <button onclick="toggleModal('addModal')">➕ Add Feed</button>
-      <button class="btn-reset" onclick="resetToDefaults()">🧹 Reset</button>
+      <button class="btn-reset" onclick="resetToDefaults()">🧹 Clear Cache</button>
       <button onclick="fetchFeeds()">🔄 Refresh</button>
     </div>
   </header>
 
-  <!-- Modal for custom RSS sources -->
   <div class="modal" id="addModal">
     <h3 style="margin-top:0; font-size:1rem; color:var(--yellow-primary);">Add Custom RSS Source</h3>
     <div style="display:flex; gap:10px; flex-wrap:wrap;">
@@ -293,7 +292,7 @@
   <div class="deck-grid" id="deckGrid"></div>
 
   <script>
-    // 100% Open & Unblocked Major Global Sources
+    // Pure Working Google News Syndicated Feed URLs (Bypasses Paywalls/Firewalls)
     const defaultSources = [
       { category: "Reuters Business", url: "https://news.google.com/rss/search?q=when:24h+allinurl:reuters.com/business&hl=en-US&gl=US&ceid=US:en" },
       { category: "Financial Times", url: "https://news.google.com/rss/search?q=when:24h+site:ft.com&hl=en-US&gl=US&ceid=US:en" },
@@ -305,30 +304,37 @@
       { category: "BBC World Business", url: "http://newsrss.bbc.co.uk/rss/newsonline_uk_edition/business/rss.xml" }
     ];
 
+    const CURRENT_STORAGE_KEY = 'deck_sources_FORCE_RELEASE_V1';
     const seenItems = new Set();
 
     function getSources() {
-      const saved = localStorage.getItem('deck_sources_v16');
+      // Force wipe any old cache from previous versions
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('deck_sources_') && key !== CURRENT_STORAGE_KEY) {
+          localStorage.removeItem(key);
+        }
+      }
+      
+      const saved = localStorage.getItem(CURRENT_STORAGE_KEY);
       return saved ? JSON.parse(saved) : defaultSources;
     }
 
     function saveSources(sources) {
-      localStorage.setItem('deck_sources_v16', JSON.stringify(sources));
+      localStorage.setItem(CURRENT_STORAGE_KEY, JSON.stringify(sources));
     }
 
     function resetToDefaults() {
-      if (confirm("Reset all feeds back to default major channels?")) {
-        localStorage.removeItem('deck_sources_v16');
-        fetchFeeds();
-      }
+      localStorage.clear();
+      fetchFeeds();
     }
 
     function saveAlertKeywords() {
-      localStorage.setItem('deck_alerts_v16', document.getElementById('alertKeywords').value);
+      localStorage.setItem('deck_alerts_v99', document.getElementById('alertKeywords').value);
     }
 
     function loadAlertKeywords() {
-      const saved = localStorage.getItem('deck_alerts_v16');
+      const saved = localStorage.getItem('deck_alerts_v99');
       if (saved) document.getElementById('alertKeywords').value = saved;
     }
 
@@ -413,7 +419,6 @@
             }
             const pubDate = el.querySelector("pubDate, updated") ? el.querySelector("pubDate, updated").textContent : "";
             
-            // Clean up titles from Google syndication tags
             if (title.includes(" - ")) {
               title = title.split(" - ")[0];
             }
@@ -435,7 +440,8 @@
 
     async function fetchFeeds() {
       const grid = document.getElementById('deckGrid');
-      
+      grid.innerHTML = '<p style="color: var(--text-muted); padding: 20px;">Fetching fresh news columns...</p>';
+
       const sources = getSources();
       let html = '';
 
@@ -494,11 +500,9 @@
       });
     }
 
-    // Initialize
     loadAlertKeywords();
     fetchFeeds();
 
-    // Auto-refresh every 60 seconds
     setInterval(fetchFeeds, 60000);
   </script>
 </body>
