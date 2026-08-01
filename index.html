@@ -27,41 +27,34 @@
       background-color: var(--bg);
       color: var(--text-main);
       margin: 0;
-      padding: 16px;
+      padding: 12px;
       line-height: 1.4;
     }
 
-    /* Curved Custom Scrollbars */
-    ::-webkit-scrollbar { width: 6px; height: 8px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: #26334d; border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--yellow-primary); }
-
-    /* Live Prices Ticker Bar */
+    /* Mobile Responsive Ticker Bar */
     .ticker-bar {
       display: flex;
-      gap: 12px;
-      overflow-x: auto;
+      flex-wrap: wrap; /* Allows FX rates to fit on mobile */
+      gap: 8px;
       background: rgba(19, 26, 41, 0.95);
       border: 1px solid var(--border-yellow);
-      border-radius: 16px;
-      padding: 10px 16px;
-      margin-bottom: 16px;
+      border-radius: 14px;
+      padding: 10px;
+      margin-bottom: 14px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.82rem;
-      align-items: center;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+      font-size: 0.78rem;
     }
 
     .ticker-item {
       display: flex;
       align-items: center;
       gap: 6px;
-      white-space: nowrap;
       background: var(--bg);
-      padding: 6px 12px;
-      border-radius: 12px;
+      padding: 5px 10px;
+      border-radius: 10px;
       border: 1px solid var(--border);
+      flex: 1 1 auto;
+      justify-content: center;
     }
 
     .ticker-label { color: var(--text-muted); font-weight: 500; }
@@ -71,59 +64,57 @@
       background: rgba(19, 26, 41, 0.85);
       backdrop-filter: blur(12px);
       border: 1px solid var(--border-yellow);
-      border-radius: 20px;
-      padding: 16px 22px;
-      margin-bottom: 20px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+      border-radius: 18px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
     }
 
     .header-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     h1 {
       margin: 0;
-      font-size: 1.35rem;
+      font-size: 1.15rem;
       font-weight: 800;
       color: var(--text-main);
-      letter-spacing: -0.02em;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     h1 span {
       color: var(--yellow-primary);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.85rem;
+      font-size: 0.75rem;
       background: var(--yellow-subtle);
-      padding: 4px 10px;
-      border-radius: 20px;
+      padding: 3px 8px;
+      border-radius: 14px;
       border: 1px solid var(--border-yellow);
     }
 
     .status-badge {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.78rem;
+      font-size: 0.72rem;
       color: var(--yellow-primary);
       background: var(--yellow-subtle);
-      padding: 6px 14px;
-      border-radius: 20px;
+      padding: 5px 10px;
+      border-radius: 16px;
       border: 1px solid var(--border-yellow);
     }
 
     .pulse {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       background-color: var(--live-green);
       border-radius: 50%;
-      box-shadow: 0 0 10px var(--live-green);
+      box-shadow: 0 0 8px var(--live-green);
       animation: blink 2s infinite;
     }
 
@@ -134,7 +125,7 @@
 
     .controls {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       flex-wrap: wrap;
     }
 
@@ -142,37 +133,22 @@
       background: var(--bg);
       border: 1px solid var(--border);
       color: var(--text-main);
-      padding: 10px 16px;
-      border-radius: 20px;
-      font-size: 0.85rem;
+      padding: 8px 12px;
+      border-radius: 16px;
+      font-size: 0.8rem;
       font-family: inherit;
-      transition: all 0.25s ease;
     }
 
-    input {
-      flex: 1;
-      min-width: 180px;
-    }
-
-    input:focus {
-      outline: none;
-      border-color: var(--yellow-primary);
-      box-shadow: 0 0 12px var(--yellow-glow);
-    }
+    input { flex: 1; min-width: 140px; }
 
     button {
       cursor: pointer;
       font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
     }
 
     button:hover {
       background: var(--yellow-primary);
       color: #000;
-      border-color: var(--yellow-primary);
-      box-shadow: 0 0 12px var(--yellow-glow);
     }
 
     .btn-alert {
@@ -185,42 +161,32 @@
       border-color: rgba(239, 68, 68, 0.4);
       color: #ef4444;
     }
-    .btn-reset:hover {
-      background: #ef4444;
-      color: #fff;
-      border-color: #ef4444;
-      box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
-    }
 
     .deck-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 14px;
     }
 
     .column {
       background: var(--card-bg);
-      border-radius: 20px;
-      padding: 16px;
+      border-radius: 16px;
+      padding: 14px;
       border: 1px solid var(--border);
-      max-height: 82vh;
+      max-height: 80vh;
       overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     }
 
     .column-title {
-      font-size: 0.88rem;
+      font-size: 0.82rem;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       color: var(--yellow-primary);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-bottom: 10px;
+      padding-bottom: 8px;
       border-bottom: 1px solid var(--border-yellow);
     }
 
@@ -228,78 +194,48 @@
       color: var(--text-muted);
       background: none;
       border: none;
-      padding: 2px 8px;
       cursor: pointer;
-      font-size: 1rem;
-      border-radius: 50%;
     }
-    .remove-btn:hover { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
 
     .news-card {
       background: rgba(11, 15, 25, 0.6);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px 14px;
-      margin-bottom: 10px;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .news-card:hover {
-      background: var(--card-hover);
-      border-color: var(--yellow-primary);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3), 0 0 10px var(--yellow-subtle);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
     }
 
     .news-card a {
       color: var(--text-main);
       text-decoration: none;
       font-weight: 600;
-      font-size: 0.88rem;
-      line-height: 1.4;
+      font-size: 0.84rem;
+      line-height: 1.35;
       display: block;
     }
-
-    .news-card a:hover { color: var(--yellow-primary); }
 
     .meta {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.74rem;
+      font-size: 0.7rem;
       color: var(--text-muted);
-      margin-top: 10px;
+      margin-top: 8px;
       font-family: 'JetBrains Mono', monospace;
     }
 
-    .source-tag {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-weight: 500;
-    }
-
-    .source-tag img { border-radius: 4px; }
-
-    .modal {
-      display: none;
-      background: var(--card-bg);
-      border: 1px solid var(--border-yellow);
-      padding: 18px;
-      border-radius: 16px;
-      margin-bottom: 18px;
-    }
+    .source-tag { display: flex; align-items: center; gap: 4px; }
   </style>
 </head>
 <body>
 
-  <!-- Live Financial Asset Ticker -->
+  <!-- Responsive Live Price Ticker -->
   <div class="ticker-bar" id="tickerBar">
-    <div class="ticker-item"><span class="ticker-label">BTC:</span><span class="ticker-val" id="priceBTC">Fetching...</span></div>
-    <div class="ticker-item"><span class="ticker-label">GOLD:</span><span class="ticker-val" id="priceGold">Fetching...</span></div>
-    <div class="ticker-item"><span class="ticker-label">SILVER:</span><span class="ticker-val" id="priceSilver">Fetching...</span></div>
-    <div class="ticker-item"><span class="ticker-label">EUR/USD:</span><span class="ticker-val" id="priceEUR">Fetching...</span></div>
-    <div class="ticker-item"><span class="ticker-label">GBP/USD:</span><span class="ticker-val" id="priceGBP">Fetching...</span></div>
+    <div class="ticker-item"><span class="ticker-label">BTC:</span><span class="ticker-val" id="priceBTC">Loading...</span></div>
+    <div class="ticker-item"><span class="ticker-label">GOLD:</span><span class="ticker-val" id="priceGold">Loading...</span></div>
+    <div class="ticker-item"><span class="ticker-label">SILVER:</span><span class="ticker-val" id="priceSilver">Loading...</span></div>
+    <div class="ticker-item"><span class="ticker-label">EUR/USD:</span><span class="ticker-val" id="priceEUR">Loading...</span></div>
+    <div class="ticker-item"><span class="ticker-label">GBP/USD:</span><span class="ticker-val" id="priceGBP">Loading...</span></div>
   </div>
 
   <header>
@@ -311,23 +247,12 @@
       </div>
     </div>
     <div class="controls">
-      <input type="text" id="searchInput" placeholder="Search headlines (Fed, Rate, AAPL)..." onkeyup="filterNews()">
-      <input type="text" id="alertKeywords" placeholder="Alert keywords (e.g. Fed, Rate, Earnings)..." onchange="saveAlertKeywords()">
+      <input type="text" id="searchInput" placeholder="Search headlines..." onkeyup="filterNews()">
       <button class="btn-alert" onclick="enableNotifications()">🔔 Alerts</button>
-      <button onclick="toggleModal('addModal')">➕ Add Feed</button>
       <button class="btn-reset" onclick="resetToDefaults()">🧹 Clear Cache</button>
       <button onclick="fetchFeeds()">🔄 Refresh</button>
     </div>
   </header>
-
-  <div class="modal" id="addModal">
-    <h3 style="margin-top:0; font-size:1rem; color:var(--yellow-primary);">Add Custom RSS Source</h3>
-    <div style="display:flex; gap:10px; flex-wrap:wrap;">
-      <input type="text" id="newCategory" placeholder="Category Name (e.g. Crypto)">
-      <input type="text" id="newUrl" placeholder="RSS Feed URL (https://...)">
-      <button onclick="addSource()">Save Source</button>
-    </div>
-  </div>
 
   <div class="deck-grid" id="deckGrid"></div>
 
@@ -343,23 +268,11 @@
       { category: "BBC World Business", url: "http://newsrss.bbc.co.uk/rss/newsonline_uk_edition/business/rss.xml" }
     ];
 
-    const STORAGE_KEY = 'deck_sources_PERFECT_V1';
-    const seenItems = new Set();
+    const STORAGE_KEY = 'deck_sources_MOBILE_FIX_V2';
 
     function getSources() {
-      // Clean up previous storage versions
-      for (let i = localStorage.length - 1; i >= 0; i--) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith('deck_sources_') && key !== STORAGE_KEY) {
-          localStorage.removeItem(key);
-        }
-      }
       const saved = localStorage.getItem(STORAGE_KEY);
       return saved ? JSON.parse(saved) : defaultSources;
-    }
-
-    function saveSources(sources) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(sources));
     }
 
     function resetToDefaults() {
@@ -367,98 +280,29 @@
       location.reload();
     }
 
-    function saveAlertKeywords() {
-      localStorage.setItem('deck_alerts_v300', document.getElementById('alertKeywords').value);
-    }
-
-    function loadAlertKeywords() {
-      const saved = localStorage.getItem('deck_alerts_v300');
-      if (saved) document.getElementById('alertKeywords').value = saved;
-    }
-
-    function toggleModal(id) {
-      const el = document.getElementById(id);
-      el.style.display = el.style.display === 'block' ? 'none' : 'block';
-    }
-
-    function addSource() {
-      const category = document.getElementById('newCategory').value.trim();
-      const url = document.getElementById('newUrl').value.trim();
-      if (!category || !url) return alert('Please enter both a category name and RSS URL.');
-
-      const sources = getSources();
-      sources.push({ category, url });
-      saveSources(sources);
-
-      document.getElementById('newCategory').value = '';
-      document.getElementById('newUrl').value = '';
-      toggleModal('addModal');
-      fetchFeeds();
-    }
-
-    function removeSource(index) {
-      const sources = getSources();
-      sources.splice(index, 1);
-      saveSources(sources);
-      fetchFeeds();
-    }
-
-    function enableNotifications() {
-      if ("Notification" in window) {
-        Notification.requestPermission().then(permission => {
-          if (permission === "granted") alert("Desktop alerts enabled!");
-        });
-      }
-    }
-
-    function checkAlerts(items) {
-      const alertInput = document.getElementById('alertKeywords').value;
-      if (!alertInput || Notification.permission !== "granted") return;
-
-      const keywords = alertInput.toLowerCase().split(',').map(k => k.trim()).filter(Boolean);
-      if (keywords.length === 0) return;
-
-      items.forEach(item => {
-        const titleLower = item.title.toLowerCase();
-        const itemKey = item.guid || item.link;
-
-        if (!seenItems.has(itemKey)) {
-          seenItems.add(itemKey);
-          const matched = keywords.find(kw => titleLower.includes(kw));
-          if (matched) {
-            new Notification(`🚨 Priority Alert: ${matched.toUpperCase()}`, {
-              body: item.title,
-              icon: "https://fav.farm/📈"
-            });
-          }
-        }
-      });
-    }
-
-    // Live Prices Fetcher
+    // Working Commodities & FX API
     async function fetchPrices() {
+      // 1. Fetch Bitcoin
       try {
-        const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,gold,silver&vs_currencies=usd");
-        const data = await res.json();
-        if (data.bitcoin) document.getElementById('priceBTC').innerText = "$" + data.bitcoin.usd.toLocaleString();
-        if (data.gold) document.getElementById('priceGold').innerText = "$" + data.gold.usd.toLocaleString() + "/oz";
-        if (data.silver) document.getElementById('priceSilver').innerText = "$" + data.silver.usd.toLocaleString() + "/oz";
-      } catch (e) {
-        document.getElementById('priceGold').innerText = "Live";
-        document.getElementById('priceSilver').innerText = "Live";
-      }
+        const resBTC = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd");
+        const btcData = await resBTC.json();
+        if (btcData.bitcoin) document.getElementById('priceBTC').innerText = "$" + btcData.bitcoin.usd.toLocaleString();
+      } catch (e) {}
 
+      // 2. Fetch Gold, Silver, EUR, GBP
       try {
-        const resFX = await fetch("https://open.er-api.com/v6/latest/USD");
-        const fxData = await resFX.json();
+        const resMetals = await fetch("https://api.fxratesapi.com/latest");
+        const fxData = await resMetals.json();
         if (fxData && fxData.rates) {
-          document.getElementById('priceEUR').innerText = (1 / fxData.rates.EUR).toFixed(4);
-          document.getElementById('priceGBP').innerText = (1 / fxData.rates.GBP).toFixed(4);
+          // XAU = Gold, XAG = Silver
+          if (fxData.rates.XAU) document.getElementById('priceGold').innerText = "$" + (1 / fxData.rates.XAU).toFixed(2) + "/oz";
+          if (fxData.rates.XAG) document.getElementById('priceSilver').innerText = "$" + (1 / fxData.rates.XAG).toFixed(2) + "/oz";
+          if (fxData.rates.EUR) document.getElementById('priceEUR').innerText = (1 / fxData.rates.EUR).toFixed(4);
+          if (fxData.rates.GBP) document.getElementById('priceGBP').innerText = (1 / fxData.rates.GBP).toFixed(4);
         }
       } catch (e) {}
     }
 
-    // Convert raw timestamps into your phone's exact local time
     function formatTime(pubDateStr) {
       if (!pubDateStr) return '';
       const parsedDate = new Date(pubDateStr);
@@ -466,9 +310,7 @@
       return parsedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
 
-    // Multi-Gateway Failover Fetcher
     async function loadFeed(url) {
-      // Gateway 1: AllOrigins
       try {
         const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
         const data = await res.json();
@@ -481,80 +323,45 @@
               const title = el.querySelector("title") ? el.querySelector("title").textContent : "No Title";
               let link = "#";
               const linkEl = el.querySelector("link");
-              if (linkEl) {
-                link = linkEl.getAttribute("href") || linkEl.textContent || "#";
-              }
+              if (linkEl) link = linkEl.getAttribute("href") || linkEl.textContent || "#";
               const rawDate = el.querySelector("pubDate, updated, date") ? el.querySelector("pubDate, updated, date").textContent : "";
-              return { title, link, pubDate: rawDate, author: "" };
+              return { title, link, pubDate: rawDate };
             });
           }
         }
       } catch (e) {}
-
-      // Gateway 2: CodeTabs Proxy
-      try {
-        const res = await fetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`);
-        const xmlText = await res.text();
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(xmlText, "text/xml");
-        const items = Array.from(xml.querySelectorAll("item, entry")).slice(0, 15);
-        if (items.length > 0) {
-          return items.map(el => {
-            const title = el.querySelector("title") ? el.querySelector("title").textContent : "No Title";
-            let link = "#";
-            const linkEl = el.querySelector("link");
-            if (linkEl) {
-              link = linkEl.getAttribute("href") || linkEl.textContent || "#";
-            }
-            const rawDate = el.querySelector("pubDate, updated") ? el.querySelector("pubDate, updated").textContent : "";
-            return { title, link, pubDate: rawDate, author: "" };
-          });
-        }
-      } catch (e) {}
-
       return [];
     }
 
     async function fetchFeeds() {
       const grid = document.getElementById('deckGrid');
-      
       const sources = getSources();
       let html = '';
 
       for (let i = 0; i < sources.length; i++) {
         const source = sources[i];
         const items = await loadFeed(source.url);
-        
-        checkAlerts(items);
 
         html += `
           <div class="column">
-            <div class="column-title">
-              <span>${source.category}</span>
-              <button class="remove-btn" onclick="removeSource(${i})" title="Remove Source">✕</button>
-            </div>
+            <div class="column-title"><span>${source.category}</span></div>
             <div class="news-list">
         `;
 
         if (items.length === 0) {
-          html += `<p style="font-size:0.8rem; color:var(--text-muted); padding: 8px 0;">Feed updating...</p>`;
+          html += `<p style="font-size:0.8rem; color:var(--text-muted); padding: 8px 0;">Updating feed...</p>`;
         }
 
         items.forEach(item => {
           const localTime = formatTime(item.pubDate);
-          
           let domain = "news";
           try { domain = new URL(item.link).hostname.replace('www.', ''); } catch(e){}
-          const iconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
 
           html += `
             <div class="news-card">
               <a href="${item.link}" target="_blank" rel="noopener">${item.title}</a>
               <div class="meta">
-                <span class="source-tag">
-                  <img src="${iconUrl}" width="14" height="14" alt="logo" onerror="this.style.display='none'">
-                  ${item.author || domain}
-                </span>
+                <span class="source-tag">${domain}</span>
                 <span>${localTime}</span>
               </div>
             </div>
@@ -566,7 +373,6 @@
 
       grid.innerHTML = html;
       document.getElementById('lastUpdated').innerText = 'LIVE • ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      filterNews();
     }
 
     function filterNews() {
@@ -576,14 +382,11 @@
       });
     }
 
-    // Startup
-    loadAlertKeywords();
     fetchPrices();
     fetchFeeds();
 
-    // Intervals
-    setInterval(fetchFeeds, 60000);  // Feeds refresh every 60s
-    setInterval(fetchPrices, 30000); // Prices refresh every 30s
+    setInterval(fetchFeeds, 60000);
+    setInterval(fetchPrices, 30000);
   </script>
 </body>
 </html>
