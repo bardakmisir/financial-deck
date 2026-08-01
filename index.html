@@ -3,102 +3,250 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Financial News Deck</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <title>Terminal News Deck</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0f172a;
-      --card-bg: #1e293b;
-      --accent: #38bdf8;
-      --text: #f8fafc;
-      --muted: #94a3b8;
-      --border: #334155;
-      --alert: #f59e0b;
+      --bg: #090d16;
+      --card-bg: #111827;
+      --card-hover: #1f293d;
+      --accent-cyan: #06b6d4;
+      --accent-amber: #f59e0b;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --border: #1e293b;
+      --live-green: #10b981;
     }
+
     * { box-sizing: border-box; }
+
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Inter', -apple-system, sans-serif;
       background-color: var(--bg);
-      color: var(--text);
+      color: var(--text-main);
       margin: 0;
-      padding: 15px;
+      padding: 16px;
+      line-height: 1.4;
     }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
+
     header {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 20px;
-      padding-bottom: 15px;
-      border-bottom: 1px solid var(--border);
+      background: rgba(17, 24, 39, 0.8);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 16px;
     }
+
     .header-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-bottom: 12px;
     }
-    h1 { margin: 0; font-size: 1.4rem; color: var(--accent); display: flex; align-items: center; gap: 8px; }
+
+    h1 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h1 span {
+      color: var(--accent-cyan);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      background: rgba(6, 182, 212, 0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(6, 182, 212, 0.2);
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .pulse {
+      width: 8px;
+      height: 8px;
+      background-color: var(--live-green);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--live-green);
+      animation: blink 2s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
     .controls {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       flex-wrap: wrap;
     }
+
     input, button {
-      background: var(--card-bg);
+      background: var(--bg);
       border: 1px solid var(--border);
-      color: var(--text);
+      color: var(--text-main);
       padding: 8px 12px;
       border-radius: 6px;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
+      transition: all 0.2s ease;
     }
-    input { flex: 1; min-width: 160px; }
-    input:focus { outline: 1px solid var(--accent); }
-    button { cursor: pointer; font-weight: bold; transition: background 0.2s; }
-    button:hover { background: #334155; }
-    .btn-alert { border-color: var(--alert); color: var(--alert); }
-    .btn-alert:hover { background: rgba(245, 158, 11, 0.1); }
-    .btn-reset { border-color: #f87171; color: #f87171; }
+
+    input {
+      flex: 1;
+      min-width: 180px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 8px rgba(6, 182, 212, 0.2);
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    button:hover {
+      background: var(--card-bg);
+      border-color: var(--text-muted);
+    }
+
+    .btn-alert {
+      border-color: rgba(245, 158, 11, 0.4);
+      color: var(--accent-amber);
+    }
+    .btn-alert:hover {
+      background: rgba(245, 158, 11, 0.1);
+      border-color: var(--accent-amber);
+    }
+
+    .btn-reset {
+      border-color: rgba(239, 68, 68, 0.4);
+      color: #ef4444;
+    }
+    .btn-reset:hover {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: #ef4444;
+    }
+
     .deck-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-      gap: 15px;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 16px;
     }
+
     .column {
-      background: rgba(30, 41, 59, 0.5);
+      background: var(--card-bg);
       border-radius: 8px;
-      padding: 12px;
+      padding: 14px;
       border: 1px solid var(--border);
-      max-height: 82vh;
+      max-height: 83vh;
       overflow-y: auto;
+      display: flex;
+      flex-direction: column;
     }
+
     .column-title {
-      font-size: 0.95rem;
+      font-size: 0.88rem;
       font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
       margin-bottom: 12px;
-      color: var(--accent);
+      color: var(--accent-cyan);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
     }
-    .remove-btn { color: #f87171; background: none; border: none; padding: 2px 6px; cursor: pointer; }
+
+    .remove-btn {
+      color: var(--text-muted);
+      background: none;
+      border: none;
+      padding: 2px 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .remove-btn:hover { color: #ef4444; }
+
     .news-card {
-      background: var(--card-bg);
+      background: rgba(9, 13, 22, 0.5);
       border: 1px solid var(--border);
       border-radius: 6px;
-      padding: 10px;
-      margin-bottom: 10px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      transition: all 0.15s ease-in-out;
     }
-    .news-card a { color: var(--text); text-decoration: none; font-weight: 600; font-size: 0.88rem; line-height: 1.3; display: block; }
-    .news-card a:hover { color: var(--accent); }
-    .meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--muted); margin-top: 8px; }
-    .source-tag { display: flex; align-items: center; gap: 6px; }
+
+    .news-card:hover {
+      background: var(--card-hover);
+      border-color: rgba(6, 182, 212, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .news-card a {
+      color: var(--text-main);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.85rem;
+      line-height: 1.35;
+      display: block;
+    }
+
+    .news-card a:hover { color: var(--accent-cyan); }
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 8px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .source-tag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
     .source-tag img { border-radius: 2px; }
+
     .modal {
       display: none;
       background: var(--card-bg);
       border: 1px solid var(--border);
-      padding: 15px;
+      padding: 16px;
       border-radius: 8px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
   </style>
 </head>
@@ -106,22 +254,25 @@
 
   <header>
     <div class="header-top">
-      <h1>📈 Financial News Deck</h1>
-      <small id="lastUpdated" style="color: var(--muted);"></small>
+      <h1>FINANCIAL TERMINAL <span>PRO v1.0</span></h1>
+      <div class="status-badge">
+        <div class="pulse"></div>
+        <span id="lastUpdated">CONNECTING...</span>
+      </div>
     </div>
     <div class="controls">
-      <input type="text" id="searchInput" placeholder="Filter headlines (Fed, Rate, AAPL)..." onkeyup="filterNews()">
+      <input type="text" id="searchInput" placeholder="Search headlines (Fed, Rate, AAPL)..." onkeyup="filterNews()">
       <input type="text" id="alertKeywords" placeholder="Alert keywords (e.g. Fed, Rate, Earnings)..." onchange="saveAlertKeywords()">
-      <button class="btn-alert" onclick="enableNotifications()">🔔 Enable Alerts</button>
-      <button onclick="toggleModal('addModal')">➕ Add Source</button>
-      <button class="btn-reset" onclick="resetToDefaults()">🧹 Reset Feeds</button>
+      <button class="btn-alert" onclick="enableNotifications()">🔔 Alerts</button>
+      <button onclick="toggleModal('addModal')">➕ Add Feed</button>
+      <button class="btn-reset" onclick="resetToDefaults()">🧹 Reset</button>
       <button onclick="fetchFeeds()">🔄 Refresh</button>
     </div>
   </header>
 
   <!-- Modal for custom RSS sources -->
   <div class="modal" id="addModal">
-    <h3 style="margin-top:0; font-size:1rem;">Add Custom RSS Source</h3>
+    <h3 style="margin-top:0; font-size:0.95rem; color:var(--accent-cyan);">Add Custom RSS Source</h3>
     <div style="display:flex; gap:8px; flex-wrap:wrap;">
       <input type="text" id="newCategory" placeholder="Category Name (e.g. Crypto)">
       <input type="text" id="newUrl" placeholder="RSS Feed URL (https://...)">
@@ -132,40 +283,39 @@
   <div class="deck-grid" id="deckGrid"></div>
 
   <script>
-    // Bulletproof list of high-reliability, open RSS feeds
     const defaultSources = [
-      { category: "CNBC Business & Markets", url: "https://www.cnbc.com/id/100003114/device/rss/rss.html" },
-      { category: "NYT Business & Tech", url: "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml" },
+      { category: "CNBC Markets", url: "https://www.cnbc.com/id/100003114/device/rss/rss.html" },
+      { category: "NYT Business", url: "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml" },
       { category: "Wall Street Journal", url: "https://feeds.a.dj.com/rss/WSJcomUSBusiness.xml" },
-      { category: "CNBC Economy & Jobs", url: "https://www.cnbc.com/id/20910258/device/rss/rss.html" },
-      { category: "TechCrunch (Big Tech)", url: "https://techcrunch.com/feed/" },
+      { category: "Economy & Jobs", url: "https://www.cnbc.com/id/20910258/device/rss/rss.html" },
+      { category: "TechCrunch", url: "https://techcrunch.com/feed/" },
       { category: "Yahoo Finance", url: "https://finance.yahoo.com/news/rssindex" }
     ];
 
     const seenItems = new Set();
 
     function getSources() {
-      const saved = localStorage.getItem('deck_sources_v10');
+      const saved = localStorage.getItem('deck_sources_v11');
       return saved ? JSON.parse(saved) : defaultSources;
     }
 
     function saveSources(sources) {
-      localStorage.setItem('deck_sources_v10', JSON.stringify(sources));
+      localStorage.setItem('deck_sources_v11', JSON.stringify(sources));
     }
 
     function resetToDefaults() {
-      if (confirm("Reset all feeds back to the default working sources?")) {
-        localStorage.removeItem('deck_sources_v10');
+      if (confirm("Reset all feeds back to the default sources?")) {
+        localStorage.removeItem('deck_sources_v11');
         fetchFeeds();
       }
     }
 
     function saveAlertKeywords() {
-      localStorage.setItem('deck_alerts_v10', document.getElementById('alertKeywords').value);
+      localStorage.setItem('deck_alerts_v11', document.getElementById('alertKeywords').value);
     }
 
     function loadAlertKeywords() {
-      const saved = localStorage.getItem('deck_alerts_v10');
+      const saved = localStorage.getItem('deck_alerts_v11');
       if (saved) document.getElementById('alertKeywords').value = saved;
     }
 
@@ -200,7 +350,7 @@
       if ("Notification" in window) {
         Notification.requestPermission().then(permission => {
           if (permission === "granted") {
-            alert("Desktop alerts enabled! You will be notified when tracked keywords appear.");
+            alert("Desktop alerts enabled!");
           }
         });
       } else {
@@ -232,9 +382,7 @@
       });
     }
 
-    // Multi-Proxy Robust Parser
     async function loadFeed(url) {
-      // Proxy 1: CodeTabs CORS proxy
       try {
         const res = await fetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`);
         const xmlText = await res.text();
@@ -256,7 +404,6 @@
         }
       } catch (e) {}
 
-      // Proxy 2: RSS2JSON API
       try {
         const res = await fetch("https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(url));
         const data = await res.json();
@@ -270,7 +417,6 @@
 
     async function fetchFeeds() {
       const grid = document.getElementById('deckGrid');
-      grid.innerHTML = '<p style="color: var(--muted);">Updating live feeds...</p>';
       
       const sources = getSources();
       let html = '';
@@ -291,7 +437,7 @@
         `;
 
         if (items.length === 0) {
-          html += `<p style="font-size:0.85rem; color:var(--muted);">No news items found or feed offline.</p>`;
+          html += `<p style="font-size:0.8rem; color:var(--text-muted); padding: 8px 0;">No items available or feed offline.</p>`;
         }
 
         items.forEach(item => {
@@ -306,7 +452,7 @@
               <a href="${item.link}" target="_blank" rel="noopener">${item.title}</a>
               <div class="meta">
                 <span class="source-tag">
-                  <img src="${iconUrl}" width="14" height="14" alt="logo" onerror="this.style.display='none'">
+                  <img src="${iconUrl}" width="13" height="13" alt="logo" onerror="this.style.display='none'">
                   ${item.author || domain}
                 </span>
                 <span>${pubDate}</span>
@@ -319,7 +465,7 @@
       }
 
       grid.innerHTML = html;
-      document.getElementById('lastUpdated').innerText = 'Updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      document.getElementById('lastUpdated').innerText = 'LIVE • ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
       filterNews();
     }
 
@@ -334,8 +480,8 @@
     loadAlertKeywords();
     fetchFeeds();
 
-    // Auto-refresh every 30 seconds
-    setInterval(fetchFeeds, 30000);
+    // Auto-refresh every 60 seconds
+    setInterval(fetchFeeds, 60000);
   </script>
 </body>
 </html>
