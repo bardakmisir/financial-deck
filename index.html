@@ -27,12 +27,12 @@
       background-color: var(--bg);
       color: var(--text-main);
       margin: 0;
-      padding: 20px;
+      padding: 18px;
       line-height: 1.4;
     }
 
     /* Curved Custom Scrollbars */
-    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar { width: 6px; height: 8px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: #26334d; border-radius: 10px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--yellow-primary); }
@@ -113,7 +113,7 @@
       border: 1px solid var(--border);
       color: var(--text-main);
       padding: 10px 16px;
-      border-radius: 20px; /* Curvy Pill Style */
+      border-radius: 20px;
       font-size: 0.85rem;
       font-family: inherit;
       transition: all 0.25s ease;
@@ -164,13 +164,13 @@
 
     .deck-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 18px;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 16px;
     }
 
     .column {
       background: var(--card-bg);
-      border-radius: 20px; /* Extra Curvy Columns */
+      border-radius: 20px;
       padding: 16px;
       border: 1px solid var(--border);
       max-height: 82vh;
@@ -181,7 +181,7 @@
     }
 
     .column-title {
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.04em;
@@ -208,7 +208,7 @@
     .news-card {
       background: rgba(11, 15, 25, 0.6);
       border: 1px solid var(--border);
-      border-radius: 14px; /* Curved News Cards */
+      border-radius: 14px;
       padding: 12px 14px;
       margin-bottom: 10px;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -265,7 +265,7 @@
 
   <header>
     <div class="header-top">
-      <h1>FINANCIAL DECK <span>PRO</span></h1>
+      <h1>FINANCIAL TERMINAL <span>PRO</span></h1>
       <div class="status-badge">
         <div class="pulse"></div>
         <span id="lastUpdated">CONNECTING...</span>
@@ -294,39 +294,42 @@
   <div class="deck-grid" id="deckGrid"></div>
 
   <script>
+    // Expanded Major Global News Outlets
     const defaultSources = [
-      { category: "CNBC Markets", url: "https://www.cnbc.com/id/100003114/device/rss/rss.html" },
-      { category: "NYT Business", url: "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml" },
+      { category: "Bloomberg Markets", url: "https://feeds.bloomberg.com/markets/news.rss" },
+      { category: "Reuters Business", url: "https://www.reutersagency.com/feed/?best-topics=business-finance" },
+      { category: "Financial Times", url: "https://www.ft.com/news-feed" },
+      { category: "CNBC Top News", url: "https://www.cnbc.com/id/100003114/device/rss/rss.html" },
       { category: "Wall Street Journal", url: "https://feeds.a.dj.com/rss/WSJcomUSBusiness.xml" },
-      { category: "Economy & Jobs", url: "https://www.cnbc.com/id/20910258/device/rss/rss.html" },
-      { category: "TechCrunch", url: "https://techcrunch.com/feed/" },
-      { category: "Yahoo Finance", url: "https://finance.yahoo.com/news/rssindex" }
+      { category: "MarketWatch", url: "http://feeds.marketwatch.com/marketwatch/topstories/" },
+      { category: "NY Times Business", url: "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml" },
+      { category: "BBC World Business", url: "http://newsrss.bbc.co.uk/rss/newsonline_uk_edition/business/rss.xml" }
     ];
 
     const seenItems = new Set();
 
     function getSources() {
-      const saved = localStorage.getItem('deck_sources_v12');
+      const saved = localStorage.getItem('deck_sources_v14');
       return saved ? JSON.parse(saved) : defaultSources;
     }
 
     function saveSources(sources) {
-      localStorage.setItem('deck_sources_v12', JSON.stringify(sources));
+      localStorage.setItem('deck_sources_v14', JSON.stringify(sources));
     }
 
     function resetToDefaults() {
-      if (confirm("Reset all feeds back to default?")) {
-        localStorage.removeItem('deck_sources_v12');
+      if (confirm("Reset all feeds back to default major channels?")) {
+        localStorage.removeItem('deck_sources_v14');
         fetchFeeds();
       }
     }
 
     function saveAlertKeywords() {
-      localStorage.setItem('deck_alerts_v12', document.getElementById('alertKeywords').value);
+      localStorage.setItem('deck_alerts_v14', document.getElementById('alertKeywords').value);
     }
 
     function loadAlertKeywords() {
-      const saved = localStorage.getItem('deck_alerts_v12');
+      const saved = localStorage.getItem('deck_alerts_v14');
       if (saved) document.getElementById('alertKeywords').value = saved;
     }
 
@@ -448,7 +451,7 @@
         `;
 
         if (items.length === 0) {
-          html += `<p style="font-size:0.8rem; color:var(--text-muted); padding: 8px 0;">No items available or feed offline.</p>`;
+          html += `<p style="font-size:0.8rem; color:var(--text-muted); padding: 8px 0;">No items available or feed updating...</p>`;
         }
 
         items.forEach(item => {
