@@ -3,58 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Terminal News Deck</title>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>Financial Terminal Deck</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #090d16;
-      --card-bg: #111827;
-      --card-hover: #1f293d;
-      --accent-cyan: #06b6d4;
-      --accent-amber: #f59e0b;
-      --text-main: #f3f4f6;
-      --text-muted: #9ca3af;
+      --bg: #0b0f19;
+      --card-bg: #131a29;
+      --card-hover: #1c263b;
+      --yellow-primary: #fbbf24;
+      --yellow-glow: rgba(251, 191, 36, 0.25);
+      --yellow-subtle: rgba(251, 191, 36, 0.1);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
       --border: #1e293b;
-      --live-green: #10b981;
+      --border-yellow: rgba(251, 191, 36, 0.3);
+      --live-green: #22c55e;
     }
 
     * { box-sizing: border-box; }
 
     body {
-      font-family: 'Inter', -apple-system, sans-serif;
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
       background-color: var(--bg);
       color: var(--text-main);
       margin: 0;
-      padding: 16px;
+      padding: 20px;
       line-height: 1.4;
     }
 
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar { width: 5px; }
+    /* Curved Custom Scrollbars */
+    ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
+    ::-webkit-scrollbar-thumb { background: #26334d; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--yellow-primary); }
 
     header {
-      background: rgba(17, 24, 39, 0.8);
-      backdrop-filter: blur(8px);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 14px 18px;
-      margin-bottom: 16px;
+      background: rgba(19, 26, 41, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-yellow);
+      border-radius: 20px;
+      padding: 16px 22px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
     }
 
     .header-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
     h1 {
       margin: 0;
-      font-size: 1.25rem;
-      font-weight: 700;
+      font-size: 1.35rem;
+      font-weight: 800;
       color: var(--text-main);
       letter-spacing: -0.02em;
       display: flex;
@@ -63,13 +66,13 @@
     }
 
     h1 span {
-      color: var(--accent-cyan);
+      color: var(--yellow-primary);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.9rem;
-      background: rgba(6, 182, 212, 0.1);
-      padding: 2px 8px;
-      border-radius: 4px;
-      border: 1px solid rgba(6, 182, 212, 0.2);
+      font-size: 0.85rem;
+      background: var(--yellow-subtle);
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border-yellow);
     }
 
     .status-badge {
@@ -77,8 +80,12 @@
       align-items: center;
       gap: 8px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      color: var(--text-muted);
+      font-size: 0.78rem;
+      color: var(--yellow-primary);
+      background: var(--yellow-subtle);
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border-yellow);
     }
 
     .pulse {
@@ -86,7 +93,7 @@
       height: 8px;
       background-color: var(--live-green);
       border-radius: 50%;
-      box-shadow: 0 0 8px var(--live-green);
+      box-shadow: 0 0 10px var(--live-green);
       animation: blink 2s infinite;
     }
 
@@ -105,10 +112,11 @@
       background: var(--bg);
       border: 1px solid var(--border);
       color: var(--text-main);
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-size: 0.82rem;
-      transition: all 0.2s ease;
+      padding: 10px 16px;
+      border-radius: 20px; /* Curvy Pill Style */
+      font-size: 0.85rem;
+      font-family: inherit;
+      transition: all 0.25s ease;
     }
 
     input {
@@ -118,30 +126,29 @@
 
     input:focus {
       outline: none;
-      border-color: var(--accent-cyan);
-      box-shadow: 0 0 8px rgba(6, 182, 212, 0.2);
+      border-color: var(--yellow-primary);
+      box-shadow: 0 0 12px var(--yellow-glow);
     }
 
     button {
       cursor: pointer;
-      font-weight: 600;
+      font-weight: 700;
       display: inline-flex;
       align-items: center;
       gap: 6px;
     }
 
     button:hover {
-      background: var(--card-bg);
-      border-color: var(--text-muted);
+      background: var(--yellow-primary);
+      color: #000;
+      border-color: var(--yellow-primary);
+      box-shadow: 0 0 12px var(--yellow-glow);
     }
 
     .btn-alert {
-      border-color: rgba(245, 158, 11, 0.4);
-      color: var(--accent-amber);
-    }
-    .btn-alert:hover {
-      background: rgba(245, 158, 11, 0.1);
-      border-color: var(--accent-amber);
+      border-color: var(--yellow-primary);
+      color: var(--yellow-primary);
+      background: var(--yellow-subtle);
     }
 
     .btn-reset {
@@ -149,84 +156,89 @@
       color: #ef4444;
     }
     .btn-reset:hover {
-      background: rgba(239, 68, 68, 0.1);
+      background: #ef4444;
+      color: #fff;
       border-color: #ef4444;
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
     }
 
     .deck-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 16px;
+      gap: 18px;
     }
 
     .column {
       background: var(--card-bg);
-      border-radius: 8px;
-      padding: 14px;
+      border-radius: 20px; /* Extra Curvy Columns */
+      padding: 16px;
       border: 1px solid var(--border);
-      max-height: 83vh;
+      max-height: 82vh;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     }
 
     .column-title {
-      font-size: 0.88rem;
-      font-weight: 700;
+      font-size: 0.9rem;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 12px;
-      color: var(--accent-cyan);
+      letter-spacing: 0.04em;
+      margin-bottom: 14px;
+      color: var(--yellow-primary);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-yellow);
     }
 
     .remove-btn {
       color: var(--text-muted);
       background: none;
       border: none;
-      padding: 2px 6px;
+      padding: 2px 8px;
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 1rem;
+      border-radius: 50%;
     }
-    .remove-btn:hover { color: #ef4444; }
+    .remove-btn:hover { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
 
     .news-card {
-      background: rgba(9, 13, 22, 0.5);
+      background: rgba(11, 15, 25, 0.6);
       border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 10px 12px;
-      margin-bottom: 8px;
-      transition: all 0.15s ease-in-out;
+      border-radius: 14px; /* Curved News Cards */
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .news-card:hover {
       background: var(--card-hover);
-      border-color: rgba(6, 182, 212, 0.4);
-      transform: translateY(-1px);
+      border-color: var(--yellow-primary);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3), 0 0 10px var(--yellow-subtle);
     }
 
     .news-card a {
       color: var(--text-main);
       text-decoration: none;
-      font-weight: 500;
-      font-size: 0.85rem;
-      line-height: 1.35;
+      font-weight: 600;
+      font-size: 0.88rem;
+      line-height: 1.4;
       display: block;
     }
 
-    .news-card a:hover { color: var(--accent-cyan); }
+    .news-card a:hover { color: var(--yellow-primary); }
 
     .meta {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.72rem;
+      font-size: 0.74rem;
       color: var(--text-muted);
-      margin-top: 8px;
+      margin-top: 10px;
       font-family: 'JetBrains Mono', monospace;
     }
 
@@ -234,19 +246,18 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.02em;
+      font-weight: 500;
     }
 
-    .source-tag img { border-radius: 2px; }
+    .source-tag img { border-radius: 4px; }
 
     .modal {
       display: none;
       background: var(--card-bg);
-      border: 1px solid var(--border);
-      padding: 16px;
-      border-radius: 8px;
-      margin-bottom: 16px;
+      border: 1px solid var(--border-yellow);
+      padding: 18px;
+      border-radius: 16px;
+      margin-bottom: 18px;
     }
   </style>
 </head>
@@ -254,7 +265,7 @@
 
   <header>
     <div class="header-top">
-      <h1>FINANCIAL TERMINAL <span>PRO v1.0</span></h1>
+      <h1>FINANCIAL DECK <span>PRO</span></h1>
       <div class="status-badge">
         <div class="pulse"></div>
         <span id="lastUpdated">CONNECTING...</span>
@@ -272,8 +283,8 @@
 
   <!-- Modal for custom RSS sources -->
   <div class="modal" id="addModal">
-    <h3 style="margin-top:0; font-size:0.95rem; color:var(--accent-cyan);">Add Custom RSS Source</h3>
-    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+    <h3 style="margin-top:0; font-size:1rem; color:var(--yellow-primary);">Add Custom RSS Source</h3>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
       <input type="text" id="newCategory" placeholder="Category Name (e.g. Crypto)">
       <input type="text" id="newUrl" placeholder="RSS Feed URL (https://...)">
       <button onclick="addSource()">Save Source</button>
@@ -295,27 +306,27 @@
     const seenItems = new Set();
 
     function getSources() {
-      const saved = localStorage.getItem('deck_sources_v11');
+      const saved = localStorage.getItem('deck_sources_v12');
       return saved ? JSON.parse(saved) : defaultSources;
     }
 
     function saveSources(sources) {
-      localStorage.setItem('deck_sources_v11', JSON.stringify(sources));
+      localStorage.setItem('deck_sources_v12', JSON.stringify(sources));
     }
 
     function resetToDefaults() {
-      if (confirm("Reset all feeds back to the default sources?")) {
-        localStorage.removeItem('deck_sources_v11');
+      if (confirm("Reset all feeds back to default?")) {
+        localStorage.removeItem('deck_sources_v12');
         fetchFeeds();
       }
     }
 
     function saveAlertKeywords() {
-      localStorage.setItem('deck_alerts_v11', document.getElementById('alertKeywords').value);
+      localStorage.setItem('deck_alerts_v12', document.getElementById('alertKeywords').value);
     }
 
     function loadAlertKeywords() {
-      const saved = localStorage.getItem('deck_alerts_v11');
+      const saved = localStorage.getItem('deck_alerts_v12');
       if (saved) document.getElementById('alertKeywords').value = saved;
     }
 
@@ -452,7 +463,7 @@
               <a href="${item.link}" target="_blank" rel="noopener">${item.title}</a>
               <div class="meta">
                 <span class="source-tag">
-                  <img src="${iconUrl}" width="13" height="13" alt="logo" onerror="this.style.display='none'">
+                  <img src="${iconUrl}" width="14" height="14" alt="logo" onerror="this.style.display='none'">
                   ${item.author || domain}
                 </span>
                 <span>${pubDate}</span>
