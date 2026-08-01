@@ -109,7 +109,7 @@
       <small id="lastUpdated" style="color: var(--muted);"></small>
     </div>
     <div class="controls">
-      <input type="text" id="searchInput" placeholder="Filter screen (Fed, Jobs, AAPL)..." onkeyup="filterNews()">
+      <input type="text" id="searchInput" placeholder="Filter headlines (Fed, Rate, AAPL)..." onkeyup="filterNews()">
       <input type="text" id="alertKeywords" placeholder="Alert keywords (e.g. Fed, Rate, Earnings)..." onchange="saveAlertKeywords()">
       <button class="btn-alert" onclick="enableNotifications()">🔔 Enable Alerts</button>
       <button onclick="toggleModal('addModal')">➕ Add Source</button>
@@ -130,34 +130,33 @@
   <div class="deck-grid" id="deckGrid"></div>
 
   <script>
-    // Live, high-reliability feeds from major outlets
+    // Bulletproof list of high-reliability feeds
     const defaultSources = [
       { category: "CNBC Business & Markets", url: "https://www.cnbc.com/id/100003114/device/rss/rss.html" },
       { category: "NYT Business & Tech", url: "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml" },
       { category: "Wall Street Journal", url: "https://feeds.a.dj.com/rss/WSJcomUSBusiness.xml" },
       { category: "CNBC Economy & Jobs", url: "https://www.cnbc.com/id/20910258/device/rss/rss.html" },
       { category: "TechCrunch (Big Tech)", url: "https://techcrunch.com/feed/" },
-      { category: "Yahoo Finance & Filings", url: "https://finance.yahoo.com/news/rssindex" }
+      { category: "Yahoo Finance", url: "https://finance.yahoo.com/news/rssindex" }
     ];
 
     const seenItems = new Set();
 
     function getSources() {
-      // Version v5 resets the local storage cache to pick up all 6 live feeds
-      const saved = localStorage.getItem('deck_sources_v5');
+      const saved = localStorage.getItem('deck_sources_v6');
       return saved ? JSON.parse(saved) : defaultSources;
     }
 
     function saveSources(sources) {
-      localStorage.setItem('deck_sources_v5', JSON.stringify(sources));
+      localStorage.setItem('deck_sources_v6', JSON.stringify(sources));
     }
 
     function saveAlertKeywords() {
-      localStorage.setItem('deck_alerts_v5', document.getElementById('alertKeywords').value);
+      localStorage.setItem('deck_alerts_v6', document.getElementById('alertKeywords').value);
     }
 
     function loadAlertKeywords() {
-      const saved = localStorage.getItem('deck_alerts_v5');
+      const saved = localStorage.getItem('deck_alerts_v6');
       if (saved) document.getElementById('alertKeywords').value = saved;
     }
 
@@ -224,17 +223,33 @@
       });
     }
 
+    // Smart Load Feed with Fallback Proxy
     async function loadFeed(url) {
-      const apiPrefix = "https://api.rss2json.com/v1/api.json?rss_url=";
+      // Primary API: RSS2JSON
       try {
-        const res = await fetch(apiPrefix + encodeURIComponent(url));
+        const res = await fetch("https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(url));
         const data = await res.json();
-        if (data.status === 'ok' && data.items) {
+        if (data.status === 'ok' && data.items && data.items.length > 0) {
           return data.items;
         }
-        return [];
+      } catch (e) {}
+
+      // Fallback API: Parse via AllOrigins CORS Proxy if RSS2JSON is rate-limited
+      try {
+        const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
+        const data = await res.json();
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(data.contents, "text/xml");
+        const items = Array.from(xml.querySelectorAll("item, entry")).slice(0, 15);
+
+        return items.map(el => {
+          const title = el.querySelector("title") ? el.querySelector("title").textContent : "No Title";
+          let link = el.querySelector("link") ? (el.querySelector("link").getAttribute("href") || el.querySelector("link").textContent) : "#";
+          const pubDate = el.querySelector("pubDate, updated") ? el.querySelector("pubDate, updated").textContent : "";
+          return { title, link, pubDate, author: "" };
+        });
       } catch (e) {
-        console.error("Failed to load feed", url, e);
+        console.error("All proxies failed for", url, e);
         return [];
       }
     }
@@ -262,7 +277,7 @@
         `;
 
         if (items.length === 0) {
-          html += `<p style="font-size:0.85rem; color:var(--muted);">No items available or feed updating...</p>`;
+          html += `<p style="font-size:0.85rem; color:var(--muted);">No news items found or feed offline.</p>`;
         }
 
         items.forEach(item => {
