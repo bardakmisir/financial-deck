@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Financial News Deck</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #38bdf8;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --border: #334155;
+      --alert: #f59e0b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 15px;
+    }
+    header {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--border);
+    }
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    h1 { margin: 0; font-size: 1.4rem; color: var(--accent); display: flex; align-items: center; gap: 8px; }
+    .controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    input, button {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+    }
+    input { flex: 1; min-width: 160px; }
+    input:focus { outline: 1px solid var(--accent); }
+    button { cursor: pointer; font-weight: bold; transition: background 0.2s; }
+    button:hover { background: #334155; }
+    .btn-alert { border-color: var(--alert); color: var(--alert); }
+    .btn-alert:hover { background: rgba(245, 158, 11, 0.1); }
+    .deck-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 15px;
+    }
+    .column {
+      background: rgba(30, 41, 59, 0.5);
+      border-radius: 8px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      max-height: 82vh;
+      overflow-y: auto;
+    }
+    .column-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--accent);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .remove-btn { color: #f87171; background: none; border: none; padding: 2px 6px; cursor: pointer; }
+    .news-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .news-card a { color: var(--text); text-decoration: none; font-weight: 600; font-size: 0.88rem; line-height: 1.3; display: block; }
+    .news-card a:hover { color: var(--accent); }
+    .meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--muted); margin-top: 8px; }
+    .source-tag { display: flex; align-items: center; gap: 6px; }
+    .source-tag img { border-radius: 2px; }
+    .modal {
+      display: none;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-top">
+      <h1>📈 Financial News Deck</h1>
+      <small id="lastUpdated" style="color: var(--muted);"></small>
+    </div>
+    <div class="controls">
+      <input type="text" id="searchInput" placeholder="Filter screen (Fed, Jobs, AAPL)..." onkeyup="filterNews()">
+      <input type="text" id="alertKeywords" placeholder="Alert keywords (e.g. Fed, Rate, Earnings)..." onchange="saveAlertKeywords()">
+      <button class="btn-alert" onclick="enableNotifications()">🔔 Enable Alerts</button>
+      <button onclick="toggleModal('addModal')">➕ Add Source</button>
+      <button onclick="fetchFeeds()">🔄 Refresh</button>
+    </div>
+  </header>
+
+  <!-- Modal for custom RSS sources -->
+  <div class="modal" id="addModal">
+    <h3 style="margin-top:0; font-size:1rem;">Add Custom RSS Source</h3>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <input type="text" id="newCategory" placeholder="Category Name (e.g. Crypto)">
+      <input type="text" id="newUrl" placeholder="RSS Feed URL (https://...)">
+      <button onclick="addSource()">Save Source</button>
+    </div>
+  </div>
+
+  <div class="deck-grid" id="deckGrid"></div>
+
+  <script>
+    // Comprehensive Financial News Sources
+    const defaultSources = [
+      { category: "Macro & Fed Policy", url: "https://www.federalreserve.gov/feeds/press_all.xml" },
+      { category: "Jobs & Labor (BLS)", url: "https://www.bls.gov/feed/empsit.rss" },
+      { category: "SEC 10-Q Filings", url: "https://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent&type=10-Q&count=40&output=atom" },
+      { category: "Markets & Wall St", url: "https://feeds.a.dj.com/rss/WSJcomUSBusiness.xml" },
+      { category: "Tech & Equities", url: "https://seekingalpha.com/sector/technology.xml" },
+      { category: "Energy & Commodities", url: "https://oilprice.com/rss/main" }
+    ];
+
+    const seenItems = new Set();
+
+    function getSources() {
+      const saved = localStorage.getItem('deck_sources_v4');
+      return saved ? JSON.parse(saved) : defaultSources;
+    }
+
+    function saveSources(sources) {
+      localStorage.setItem('deck_sources_v4', JSON.stringify(sources));
+    }
+
+    function saveAlertKeywords() {
+      localStorage.setItem('deck_alerts_v4', document.getElementById('alertKeywords').value);
+    }
+
+    function loadAlertKeywords() {
+      const saved = localStorage.getItem('deck_alerts_v4');
+      if (saved) document.getElementById('alertKeywords').value = saved;
+    }
+
+    function toggleModal(id) {
+      const el = document.getElementById(id);
+      el.style.display = el.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function addSource() {
+      const category = document.getElementById('newCategory').value.trim();
+      const url = document.getElementById('newUrl').value.trim();
+      if (!category || !url) return alert('Please enter both a category name and RSS URL.');
+
+      const sources = getSources();
+      sources.push({ category, url });
+      saveSources(sources);
+
+      document.getElementById('newCategory').value = '';
+      document.getElementById('newUrl').value = '';
+      toggleModal('addModal');
+      fetchFeeds();
+    }
+
+    function removeSource(index) {
+      const sources = getSources();
+      sources.splice(index, 1);
+      saveSources(sources);
+      fetchFeeds();
+    }
+
+    function enableNotifications() {
+      if ("Notification" in window) {
+        Notification.requestPermission().then(permission => {
+          if (permission === "granted") {
+            alert("Desktop alerts enabled! You will be notified when tracked keywords appear.");
+          }
+        });
+      } else {
+        alert("This browser does not support web notifications.");
+      }
+    }
+
+    function checkAlerts(items) {
+      const alertInput = document.getElementById('alertKeywords').value;
+      if (!alertInput || Notification.permission !== "granted") return;
+
+      const keywords = alertInput.toLowerCase().split(',').map(k => k.trim()).filter(Boolean);
+      if (keywords.length === 0) return;
+
+      items.forEach(item => {
+        const titleLower = item.title.toLowerCase();
+        const itemKey = item.guid || item.link;
+
+        if (!seenItems.has(itemKey)) {
+          seenItems.add(itemKey);
+          const matched = keywords.find(kw => titleLower.includes(kw));
+          if (matched) {
+            new Notification(`🚨 Priority Alert: ${matched.toUpperCase()}`, {
+              body: item.title,
+              icon: "https://fav.farm/📈"
+            });
+          }
+        }
+      });
+    }
+
+    async function loadFeed(url) {
+      const apiPrefix = "https://api.rss2json.com/v1/api.json?rss_url=";
+      try {
+        const res = await fetch(apiPrefix + encodeURIComponent(url));
+        const data = await res.json();
+        return data.items || [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    async function fetchFeeds() {
+      const grid = document.getElementById('deckGrid');
+      grid.innerHTML = '<p style="color: var(--muted);">Updating live feeds...</p>';
+      
+      const sources = getSources();
+      let html = '';
+
+      for (let i = 0; i < sources.length; i++) {
+        const source = sources[i];
+        const items = await loadFeed(source.url);
+        
+        checkAlerts(items);
+
+        html += `
+          <div class="column">
+            <div class="column-title">
+              <span>${source.category}</span>
+              <button class="remove-btn" onclick="removeSource(${i})" title="Remove Source">✕</button>
+            </div>
+            <div class="news-list">
+        `;
+
+        if (items.length === 0) {
+          html += `<p style="font-size:0.85rem; color:var(--muted);">No news items found or feed offline.</p>`;
+        }
+
+        items.forEach(item => {
+          const pubDate = item.pubDate ? new Date(item.pubDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+          
+          let domain = "news";
+          try { domain = new URL(item.link).hostname.replace('www.', ''); } catch(e){}
+          const iconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
+
+          html += `
+            <div class="news-card">
+              <a href="${item.link}" target="_blank" rel="noopener">${item.title}</a>
+              <div class="meta">
+                <span class="source-tag">
+                  <img src="${iconUrl}" width="14" height="14" alt="logo" onerror="this.style.display='none'">
+                  ${item.author || domain}
+                </span>
+                <span>${pubDate}</span>
+              </div>
+            </div>
+          `;
+        });
+
+        html += `</div></div>`;
+      }
+
+      grid.innerHTML = html;
+      document.getElementById('lastUpdated').innerText = 'Updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      filterNews();
+    }
+
+    function filterNews() {
+      const input = document.getElementById('searchInput').value.toLowerCase();
+      document.querySelectorAll('.news-card').forEach(card => {
+        card.style.display = card.innerText.toLowerCase().includes(input) ? 'block' : 'none';
+      });
+    }
+
+    // Initialize
+    loadAlertKeywords();
+    fetchFeeds();
+
+    // Auto-refresh every 5 minutes
+    setInterval(fetchFeeds, 300000);
+  </script>
+</body>
+</html>
