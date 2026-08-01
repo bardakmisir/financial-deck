@@ -131,17 +131,23 @@
 
   <script>
     // Preset high-value feeds (Includes BLS Employment, SEC 10-Q, Fed, Markets)
-    const defaultSources = [
-      { category: "Markets & Business", url: "https://feeds.a.dj.com/rss/WSJcomUSBusiness.xml" },
-      { category: "Employment & Jobs (BLS)", url: "https://www.bls.gov/feed/empsit.rss" },
-      { category: "SEC 10-Q Filings", url: "https://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent&type=10-Q&count=40&output=atom" },
-      { category: "Federal Reserve Policy", url: "https://www.federalreserve.gov/feeds/press_all.xml" }
-    ];
+   const defaultSources = [
+  { category: "Markets & Business", url: "https://feeds.a.dj.com/rss/WSJcomUSBusiness.xml" },
+  { category: "Employment & Jobs (BLS)", url: "https://www.bls.gov/feed/empsit.rss" },
+  { category: "SEC 10-Q Filings", url: "https://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent&type=10-Q&count=40&output=atom" },
+  { category: "Fed Policy", url: "https://www.federalreserve.gov/feeds/press_all.xml" },
+  { category: "Tech & Equities", url: "https://seekingalpha.com/sector/technology.xml" },
+  { category: "Big Tech News", url: "https://techcrunch.com/feed/" },
+  { category: "Crypto & Markets", url: "https://www.coindesk.com/arc/outboundfeeds/rss/" },
+  { category: "Energy & Oil", url: "https://oilprice.com/rss/main" },
+  { category: "Precious Metals", url: "https://www.kitco.com/rss/news.xml" },
+  { category: "Venture & Deals", url: "https://pitchbook.com/news/rss" }
+];
 
     const seenItems = new Set();
 
     function getSources() {
-      const saved = localStorage.getItem('deck_sources_v2');
+      const saved = localStorage.getItem('deck_sources_v3');
       return saved ? JSON.parse(saved) : defaultSources;
     }
 
