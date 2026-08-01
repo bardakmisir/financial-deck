@@ -31,7 +31,6 @@
       line-height: 1.4;
     }
 
-    /* Curved Custom Scrollbars */
     ::-webkit-scrollbar { width: 6px; height: 8px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: #26334d; border-radius: 10px; }
@@ -294,42 +293,42 @@
   <div class="deck-grid" id="deckGrid"></div>
 
   <script>
-    // Expanded Major Global News Outlets
+    // 100% Open & Unblocked Major Global Sources
     const defaultSources = [
-      { category: "Bloomberg Markets", url: "https://feeds.bloomberg.com/markets/news.rss" },
-      { category: "Reuters Business", url: "https://www.reutersagency.com/feed/?best-topics=business-finance" },
-      { category: "Financial Times", url: "https://www.ft.com/news-feed" },
-      { category: "CNBC Top News", url: "https://www.cnbc.com/id/100003114/device/rss/rss.html" },
+      { category: "Reuters Business", url: "https://news.google.com/rss/search?q=when:24h+allinurl:reuters.com/business&hl=en-US&gl=US&ceid=US:en" },
+      { category: "Financial Times", url: "https://news.google.com/rss/search?q=when:24h+site:ft.com&hl=en-US&gl=US&ceid=US:en" },
+      { category: "MarketWatch", url: "https://news.google.com/rss/search?q=when:24h+site:marketwatch.com&hl=en-US&gl=US&ceid=US:en" },
+      { category: "CNBC Markets", url: "https://www.cnbc.com/id/100003114/device/rss/rss.html" },
       { category: "Wall Street Journal", url: "https://feeds.a.dj.com/rss/WSJcomUSBusiness.xml" },
-      { category: "MarketWatch", url: "http://feeds.marketwatch.com/marketwatch/topstories/" },
       { category: "NY Times Business", url: "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml" },
+      { category: "TechCrunch", url: "https://techcrunch.com/feed/" },
       { category: "BBC World Business", url: "http://newsrss.bbc.co.uk/rss/newsonline_uk_edition/business/rss.xml" }
     ];
 
     const seenItems = new Set();
 
     function getSources() {
-      const saved = localStorage.getItem('deck_sources_v14');
+      const saved = localStorage.getItem('deck_sources_v16');
       return saved ? JSON.parse(saved) : defaultSources;
     }
 
     function saveSources(sources) {
-      localStorage.setItem('deck_sources_v14', JSON.stringify(sources));
+      localStorage.setItem('deck_sources_v16', JSON.stringify(sources));
     }
 
     function resetToDefaults() {
       if (confirm("Reset all feeds back to default major channels?")) {
-        localStorage.removeItem('deck_sources_v14');
+        localStorage.removeItem('deck_sources_v16');
         fetchFeeds();
       }
     }
 
     function saveAlertKeywords() {
-      localStorage.setItem('deck_alerts_v14', document.getElementById('alertKeywords').value);
+      localStorage.setItem('deck_alerts_v16', document.getElementById('alertKeywords').value);
     }
 
     function loadAlertKeywords() {
-      const saved = localStorage.getItem('deck_alerts_v14');
+      const saved = localStorage.getItem('deck_alerts_v16');
       if (saved) document.getElementById('alertKeywords').value = saved;
     }
 
@@ -406,13 +405,18 @@
 
         if (items.length > 0) {
           return items.map(el => {
-            const title = el.querySelector("title") ? el.querySelector("title").textContent : "No Title";
+            let title = el.querySelector("title") ? el.querySelector("title").textContent : "No Title";
             let link = "#";
             const linkEl = el.querySelector("link");
             if (linkEl) {
               link = linkEl.getAttribute("href") || linkEl.textContent || "#";
             }
             const pubDate = el.querySelector("pubDate, updated") ? el.querySelector("pubDate, updated").textContent : "";
+            
+            // Clean up titles from Google syndication tags
+            if (title.includes(" - ")) {
+              title = title.split(" - ")[0];
+            }
             return { title, link, pubDate, author: "" };
           });
         }
