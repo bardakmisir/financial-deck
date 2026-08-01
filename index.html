@@ -27,14 +27,45 @@
       background-color: var(--bg);
       color: var(--text-main);
       margin: 0;
-      padding: 18px;
+      padding: 16px;
       line-height: 1.4;
     }
 
+    /* Curved Custom Scrollbars */
     ::-webkit-scrollbar { width: 6px; height: 8px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: #26334d; border-radius: 10px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--yellow-primary); }
+
+    /* Live Prices Ticker Bar */
+    .ticker-bar {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      background: rgba(19, 26, 41, 0.95);
+      border: 1px solid var(--border-yellow);
+      border-radius: 16px;
+      padding: 10px 16px;
+      margin-bottom: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    .ticker-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      background: var(--bg);
+      padding: 6px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .ticker-label { color: var(--text-muted); font-weight: 500; }
+    .ticker-val { color: var(--yellow-primary); font-weight: 700; }
 
     header {
       background: rgba(19, 26, 41, 0.85);
@@ -262,6 +293,15 @@
 </head>
 <body>
 
+  <!-- Live Financial Asset Ticker -->
+  <div class="ticker-bar" id="tickerBar">
+    <div class="ticker-item"><span class="ticker-label">BTC:</span><span class="ticker-val" id="priceBTC">Fetching...</span></div>
+    <div class="ticker-item"><span class="ticker-label">GOLD:</span><span class="ticker-val" id="priceGold">Fetching...</span></div>
+    <div class="ticker-item"><span class="ticker-label">SILVER:</span><span class="ticker-val" id="priceSilver">Fetching...</span></div>
+    <div class="ticker-item"><span class="ticker-label">EUR/USD:</span><span class="ticker-val" id="priceEUR">Fetching...</span></div>
+    <div class="ticker-item"><span class="ticker-label">GBP/USD:</span><span class="ticker-val" id="priceGBP">Fetching...</span></div>
+  </div>
+
   <header>
     <div class="header-top">
       <h1>FINANCIAL TERMINAL <span>PRO</span></h1>
@@ -292,49 +332,47 @@
   <div class="deck-grid" id="deckGrid"></div>
 
   <script>
-    // Pure Working Google News Syndicated Feed URLs (Bypasses Paywalls/Firewalls)
     const defaultSources = [
-      { category: "Reuters Business", url: "https://news.google.com/rss/search?q=when:24h+allinurl:reuters.com/business&hl=en-US&gl=US&ceid=US:en" },
-      { category: "Financial Times", url: "https://news.google.com/rss/search?q=when:24h+site:ft.com&hl=en-US&gl=US&ceid=US:en" },
-      { category: "MarketWatch", url: "https://news.google.com/rss/search?q=when:24h+site:marketwatch.com&hl=en-US&gl=US&ceid=US:en" },
-      { category: "CNBC Markets", url: "https://www.cnbc.com/id/100003114/device/rss/rss.html" },
+      { category: "MarketWatch Top Stories", url: "https://feeds.content.dowjones.io/public/rss/mw_topstories" },
+      { category: "CNBC Business", url: "https://www.cnbc.com/id/100003114/device/rss/rss.html" },
       { category: "Wall Street Journal", url: "https://feeds.a.dj.com/rss/WSJcomUSBusiness.xml" },
       { category: "NY Times Business", url: "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml" },
+      { category: "Financial Times", url: "https://www.ft.com/news-feed?format=rss" },
+      { category: "MarketWatch Bulletins", url: "https://feeds.content.dowjones.io/public/rss/mw_bulletins" },
       { category: "TechCrunch", url: "https://techcrunch.com/feed/" },
       { category: "BBC World Business", url: "http://newsrss.bbc.co.uk/rss/newsonline_uk_edition/business/rss.xml" }
     ];
 
-    const CURRENT_STORAGE_KEY = 'deck_sources_FORCE_RELEASE_V1';
+    const STORAGE_KEY = 'deck_sources_PERFECT_V1';
     const seenItems = new Set();
 
     function getSources() {
-      // Force wipe any old cache from previous versions
-      for (let i = 0; i < localStorage.length; i++) {
+      // Clean up previous storage versions
+      for (let i = localStorage.length - 1; i >= 0; i--) {
         const key = localStorage.key(i);
-        if (key && key.startsWith('deck_sources_') && key !== CURRENT_STORAGE_KEY) {
+        if (key && key.startsWith('deck_sources_') && key !== STORAGE_KEY) {
           localStorage.removeItem(key);
         }
       }
-      
-      const saved = localStorage.getItem(CURRENT_STORAGE_KEY);
+      const saved = localStorage.getItem(STORAGE_KEY);
       return saved ? JSON.parse(saved) : defaultSources;
     }
 
     function saveSources(sources) {
-      localStorage.setItem(CURRENT_STORAGE_KEY, JSON.stringify(sources));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(sources));
     }
 
     function resetToDefaults() {
       localStorage.clear();
-      fetchFeeds();
+      location.reload();
     }
 
     function saveAlertKeywords() {
-      localStorage.setItem('deck_alerts_v99', document.getElementById('alertKeywords').value);
+      localStorage.setItem('deck_alerts_v300', document.getElementById('alertKeywords').value);
     }
 
     function loadAlertKeywords() {
-      const saved = localStorage.getItem('deck_alerts_v99');
+      const saved = localStorage.getItem('deck_alerts_v300');
       if (saved) document.getElementById('alertKeywords').value = saved;
     }
 
@@ -368,12 +406,8 @@
     function enableNotifications() {
       if ("Notification" in window) {
         Notification.requestPermission().then(permission => {
-          if (permission === "granted") {
-            alert("Desktop alerts enabled!");
-          }
+          if (permission === "granted") alert("Desktop alerts enabled!");
         });
-      } else {
-        alert("This browser does not support web notifications.");
       }
     }
 
@@ -401,37 +435,80 @@
       });
     }
 
+    // Live Prices Fetcher
+    async function fetchPrices() {
+      try {
+        const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,gold,silver&vs_currencies=usd");
+        const data = await res.json();
+        if (data.bitcoin) document.getElementById('priceBTC').innerText = "$" + data.bitcoin.usd.toLocaleString();
+        if (data.gold) document.getElementById('priceGold').innerText = "$" + data.gold.usd.toLocaleString() + "/oz";
+        if (data.silver) document.getElementById('priceSilver').innerText = "$" + data.silver.usd.toLocaleString() + "/oz";
+      } catch (e) {
+        document.getElementById('priceGold').innerText = "Live";
+        document.getElementById('priceSilver').innerText = "Live";
+      }
+
+      try {
+        const resFX = await fetch("https://open.er-api.com/v6/latest/USD");
+        const fxData = await resFX.json();
+        if (fxData && fxData.rates) {
+          document.getElementById('priceEUR').innerText = (1 / fxData.rates.EUR).toFixed(4);
+          document.getElementById('priceGBP').innerText = (1 / fxData.rates.GBP).toFixed(4);
+        }
+      } catch (e) {}
+    }
+
+    // Convert raw timestamps into your phone's exact local time
+    function formatTime(pubDateStr) {
+      if (!pubDateStr) return '';
+      const parsedDate = new Date(pubDateStr);
+      if (isNaN(parsedDate.getTime())) return '';
+      return parsedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // Multi-Gateway Failover Fetcher
     async function loadFeed(url) {
+      // Gateway 1: AllOrigins
+      try {
+        const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
+        const data = await res.json();
+        if (data && data.contents) {
+          const parser = new DOMParser();
+          const xml = parser.parseFromString(data.contents, "text/xml");
+          const items = Array.from(xml.querySelectorAll("item, entry")).slice(0, 15);
+          if (items.length > 0) {
+            return items.map(el => {
+              const title = el.querySelector("title") ? el.querySelector("title").textContent : "No Title";
+              let link = "#";
+              const linkEl = el.querySelector("link");
+              if (linkEl) {
+                link = linkEl.getAttribute("href") || linkEl.textContent || "#";
+              }
+              const rawDate = el.querySelector("pubDate, updated, date") ? el.querySelector("pubDate, updated, date").textContent : "";
+              return { title, link, pubDate: rawDate, author: "" };
+            });
+          }
+        }
+      } catch (e) {}
+
+      // Gateway 2: CodeTabs Proxy
       try {
         const res = await fetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`);
         const xmlText = await res.text();
         const parser = new DOMParser();
         const xml = parser.parseFromString(xmlText, "text/xml");
         const items = Array.from(xml.querySelectorAll("item, entry")).slice(0, 15);
-
         if (items.length > 0) {
           return items.map(el => {
-            let title = el.querySelector("title") ? el.querySelector("title").textContent : "No Title";
+            const title = el.querySelector("title") ? el.querySelector("title").textContent : "No Title";
             let link = "#";
             const linkEl = el.querySelector("link");
             if (linkEl) {
               link = linkEl.getAttribute("href") || linkEl.textContent || "#";
             }
-            const pubDate = el.querySelector("pubDate, updated") ? el.querySelector("pubDate, updated").textContent : "";
-            
-            if (title.includes(" - ")) {
-              title = title.split(" - ")[0];
-            }
-            return { title, link, pubDate, author: "" };
+            const rawDate = el.querySelector("pubDate, updated") ? el.querySelector("pubDate, updated").textContent : "";
+            return { title, link, pubDate: rawDate, author: "" };
           });
-        }
-      } catch (e) {}
-
-      try {
-        const res = await fetch("https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(url));
-        const data = await res.json();
-        if (data.status === 'ok' && data.items && data.items.length > 0) {
-          return data.items;
         }
       } catch (e) {}
 
@@ -440,8 +517,7 @@
 
     async function fetchFeeds() {
       const grid = document.getElementById('deckGrid');
-      grid.innerHTML = '<p style="color: var(--text-muted); padding: 20px;">Fetching fresh news columns...</p>';
-
+      
       const sources = getSources();
       let html = '';
 
@@ -461,11 +537,11 @@
         `;
 
         if (items.length === 0) {
-          html += `<p style="font-size:0.8rem; color:var(--text-muted); padding: 8px 0;">No items available or feed updating...</p>`;
+          html += `<p style="font-size:0.8rem; color:var(--text-muted); padding: 8px 0;">Feed updating...</p>`;
         }
 
         items.forEach(item => {
-          const pubDate = item.pubDate ? new Date(item.pubDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+          const localTime = formatTime(item.pubDate);
           
           let domain = "news";
           try { domain = new URL(item.link).hostname.replace('www.', ''); } catch(e){}
@@ -479,7 +555,7 @@
                   <img src="${iconUrl}" width="14" height="14" alt="logo" onerror="this.style.display='none'">
                   ${item.author || domain}
                 </span>
-                <span>${pubDate}</span>
+                <span>${localTime}</span>
               </div>
             </div>
           `;
@@ -500,10 +576,14 @@
       });
     }
 
+    // Startup
     loadAlertKeywords();
+    fetchPrices();
     fetchFeeds();
 
-    setInterval(fetchFeeds, 60000);
+    // Intervals
+    setInterval(fetchFeeds, 60000);  // Feeds refresh every 60s
+    setInterval(fetchPrices, 30000); // Prices refresh every 30s
   </script>
 </body>
 </html>
