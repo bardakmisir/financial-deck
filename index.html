@@ -3,21 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Financial Terminal Deck</title>
+  <title>Terminal News & Market Deck</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #0b0f19;
       --card-bg: #131a29;
-      --card-hover: #1c263b;
       --yellow-primary: #fbbf24;
-      --yellow-glow: rgba(251, 191, 36, 0.25);
-      --yellow-subtle: rgba(251, 191, 36, 0.1);
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --border: #1e293b;
       --border-yellow: rgba(251, 191, 36, 0.3);
-      --live-green: #22c55e;
+      --border: #1e293b;
+      --text-main: #f8fafc;
     }
 
     * { box-sizing: border-box; }
@@ -31,56 +26,22 @@
       line-height: 1.4;
     }
 
-    /* Mobile Responsive Ticker Bar */
-    .ticker-bar {
-      display: flex;
-      flex-wrap: wrap; /* Allows FX rates to fit on mobile */
-      gap: 8px;
-      background: rgba(19, 26, 41, 0.95);
-      border: 1px solid var(--border-yellow);
-      border-radius: 14px;
-      padding: 10px;
-      margin-bottom: 14px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.78rem;
-    }
-
-    .ticker-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--bg);
-      padding: 5px 10px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      flex: 1 1 auto;
-      justify-content: center;
-    }
-
-    .ticker-label { color: var(--text-muted); font-weight: 500; }
-    .ticker-val { color: var(--yellow-primary); font-weight: 700; }
-
     header {
       background: rgba(19, 26, 41, 0.85);
-      backdrop-filter: blur(12px);
       border: 1px solid var(--border-yellow);
-      border-radius: 18px;
-      padding: 14px 16px;
-      margin-bottom: 16px;
-    }
-
-    .header-top {
+      border-radius: 16px;
+      padding: 12px 18px;
+      margin-bottom: 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
     }
 
     h1 {
       margin: 0;
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       font-weight: 800;
-      color: var(--text-main);
+      letter-spacing: -0.02em;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -90,303 +51,126 @@
       color: var(--yellow-primary);
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.75rem;
-      background: var(--yellow-subtle);
-      padding: 3px 8px;
+      background: rgba(251, 191, 36, 0.1);
+      padding: 2px 8px;
+      border-radius: 12px;
+      border: 1px solid var(--border-yellow);
+    }
+
+    .ticker-wrapper {
+      margin-bottom: 12px;
       border-radius: 14px;
+      overflow: hidden;
       border: 1px solid var(--border-yellow);
-    }
-
-    .status-badge {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      color: var(--yellow-primary);
-      background: var(--yellow-subtle);
-      padding: 5px 10px;
-      border-radius: 16px;
-      border: 1px solid var(--border-yellow);
-    }
-
-    .pulse {
-      width: 7px;
-      height: 7px;
-      background-color: var(--live-green);
-      border-radius: 50%;
-      box-shadow: 0 0 8px var(--live-green);
-      animation: blink 2s infinite;
-    }
-
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
-    .controls {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    input, button {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      color: var(--text-main);
-      padding: 8px 12px;
-      border-radius: 16px;
-      font-size: 0.8rem;
-      font-family: inherit;
-    }
-
-    input { flex: 1; min-width: 140px; }
-
-    button {
-      cursor: pointer;
-      font-weight: 700;
-    }
-
-    button:hover {
-      background: var(--yellow-primary);
-      color: #000;
-    }
-
-    .btn-alert {
-      border-color: var(--yellow-primary);
-      color: var(--yellow-primary);
-      background: var(--yellow-subtle);
-    }
-
-    .btn-reset {
-      border-color: rgba(239, 68, 68, 0.4);
-      color: #ef4444;
+      background: var(--card-bg);
     }
 
     .deck-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 12px;
     }
 
-    .column {
+    .widget-container {
       background: var(--card-bg);
       border-radius: 16px;
-      padding: 14px;
       border: 1px solid var(--border);
-      max-height: 80vh;
-      overflow-y: auto;
+      padding: 8px;
+      height: 600px;
+      overflow: hidden;
     }
-
-    .column-title {
-      font-size: 0.82rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      margin-bottom: 12px;
-      color: var(--yellow-primary);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--border-yellow);
-    }
-
-    .remove-btn {
-      color: var(--text-muted);
-      background: none;
-      border: none;
-      cursor: pointer;
-    }
-
-    .news-card {
-      background: rgba(11, 15, 25, 0.6);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px 12px;
-      margin-bottom: 8px;
-    }
-
-    .news-card a {
-      color: var(--text-main);
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 0.84rem;
-      line-height: 1.35;
-      display: block;
-    }
-
-    .meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      margin-top: 8px;
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .source-tag { display: flex; align-items: center; gap: 4px; }
   </style>
 </head>
 <body>
 
-  <!-- Responsive Live Price Ticker -->
-  <div class="ticker-bar" id="tickerBar">
-    <div class="ticker-item"><span class="ticker-label">BTC:</span><span class="ticker-val" id="priceBTC">Loading...</span></div>
-    <div class="ticker-item"><span class="ticker-label">GOLD:</span><span class="ticker-val" id="priceGold">Loading...</span></div>
-    <div class="ticker-item"><span class="ticker-label">SILVER:</span><span class="ticker-val" id="priceSilver">Loading...</span></div>
-    <div class="ticker-item"><span class="ticker-label">EUR/USD:</span><span class="ticker-val" id="priceEUR">Loading...</span></div>
-    <div class="ticker-item"><span class="ticker-label">GBP/USD:</span><span class="ticker-val" id="priceGBP">Loading...</span></div>
-  </div>
-
   <header>
-    <div class="header-top">
-      <h1>FINANCIAL TERMINAL <span>PRO</span></h1>
-      <div class="status-badge">
-        <div class="pulse"></div>
-        <span id="lastUpdated">CONNECTING...</span>
-      </div>
-    </div>
-    <div class="controls">
-      <input type="text" id="searchInput" placeholder="Search headlines..." onkeyup="filterNews()">
-      <button class="btn-alert" onclick="enableNotifications()">🔔 Alerts</button>
-      <button class="btn-reset" onclick="resetToDefaults()">🧹 Clear Cache</button>
-      <button onclick="fetchFeeds()">🔄 Refresh</button>
-    </div>
+    <h1>FINANCIAL TERMINAL <span>LIVE DESK</span></h1>
   </header>
 
-  <div class="deck-grid" id="deckGrid"></div>
-
-  <script>
-    const defaultSources = [
-      { category: "MarketWatch Top Stories", url: "https://feeds.content.dowjones.io/public/rss/mw_topstories" },
-      { category: "CNBC Business", url: "https://www.cnbc.com/id/100003114/device/rss/rss.html" },
-      { category: "Wall Street Journal", url: "https://feeds.a.dj.com/rss/WSJcomUSBusiness.xml" },
-      { category: "NY Times Business", url: "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml" },
-      { category: "Financial Times", url: "https://www.ft.com/news-feed?format=rss" },
-      { category: "MarketWatch Bulletins", url: "https://feeds.content.dowjones.io/public/rss/mw_bulletins" },
-      { category: "TechCrunch", url: "https://techcrunch.com/feed/" },
-      { category: "BBC World Business", url: "http://newsrss.bbc.co.uk/rss/newsonline_uk_edition/business/rss.xml" }
-    ];
-
-    const STORAGE_KEY = 'deck_sources_MOBILE_FIX_V2';
-
-    function getSources() {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      return saved ? JSON.parse(saved) : defaultSources;
-    }
-
-    function resetToDefaults() {
-      localStorage.clear();
-      location.reload();
-    }
-
-    // Working Commodities & FX API
-    async function fetchPrices() {
-      // 1. Fetch Bitcoin
-      try {
-        const resBTC = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd");
-        const btcData = await resBTC.json();
-        if (btcData.bitcoin) document.getElementById('priceBTC').innerText = "$" + btcData.bitcoin.usd.toLocaleString();
-      } catch (e) {}
-
-      // 2. Fetch Gold, Silver, EUR, GBP
-      try {
-        const resMetals = await fetch("https://api.fxratesapi.com/latest");
-        const fxData = await resMetals.json();
-        if (fxData && fxData.rates) {
-          // XAU = Gold, XAG = Silver
-          if (fxData.rates.XAU) document.getElementById('priceGold').innerText = "$" + (1 / fxData.rates.XAU).toFixed(2) + "/oz";
-          if (fxData.rates.XAG) document.getElementById('priceSilver').innerText = "$" + (1 / fxData.rates.XAG).toFixed(2) + "/oz";
-          if (fxData.rates.EUR) document.getElementById('priceEUR').innerText = (1 / fxData.rates.EUR).toFixed(4);
-          if (fxData.rates.GBP) document.getElementById('priceGBP').innerText = (1 / fxData.rates.GBP).toFixed(4);
-        }
-      } catch (e) {}
-    }
-
-    function formatTime(pubDateStr) {
-      if (!pubDateStr) return '';
-      const parsedDate = new Date(pubDateStr);
-      if (isNaN(parsedDate.getTime())) return '';
-      return parsedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    }
-
-    async function loadFeed(url) {
-      try {
-        const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
-        const data = await res.json();
-        if (data && data.contents) {
-          const parser = new DOMParser();
-          const xml = parser.parseFromString(data.contents, "text/xml");
-          const items = Array.from(xml.querySelectorAll("item, entry")).slice(0, 15);
-          if (items.length > 0) {
-            return items.map(el => {
-              const title = el.querySelector("title") ? el.querySelector("title").textContent : "No Title";
-              let link = "#";
-              const linkEl = el.querySelector("link");
-              if (linkEl) link = linkEl.getAttribute("href") || linkEl.textContent || "#";
-              const rawDate = el.querySelector("pubDate, updated, date") ? el.querySelector("pubDate, updated, date").textContent : "";
-              return { title, link, pubDate: rawDate };
-            });
-          }
-        }
-      } catch (e) {}
-      return [];
-    }
-
-    async function fetchFeeds() {
-      const grid = document.getElementById('deckGrid');
-      const sources = getSources();
-      let html = '';
-
-      for (let i = 0; i < sources.length; i++) {
-        const source = sources[i];
-        const items = await loadFeed(source.url);
-
-        html += `
-          <div class="column">
-            <div class="column-title"><span>${source.category}</span></div>
-            <div class="news-list">
-        `;
-
-        if (items.length === 0) {
-          html += `<p style="font-size:0.8rem; color:var(--text-muted); padding: 8px 0;">Updating feed...</p>`;
-        }
-
-        items.forEach(item => {
-          const localTime = formatTime(item.pubDate);
-          let domain = "news";
-          try { domain = new URL(item.link).hostname.replace('www.', ''); } catch(e){}
-
-          html += `
-            <div class="news-card">
-              <a href="${item.link}" target="_blank" rel="noopener">${item.title}</a>
-              <div class="meta">
-                <span class="source-tag">${domain}</span>
-                <span>${localTime}</span>
-              </div>
-            </div>
-          `;
-        });
-
-        html += `</div></div>`;
+  <!-- Live Market Ticker Bar (BTC, Gold, Silver, EUR/USD, GBP/USD) -->
+  <div class="ticker-wrapper">
+    <div class="tradingview-widget-container">
+      <div class="tradingview-widget-container__widget"></div>
+      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+      {
+        "symbols": [
+          { "proName": "BITSTAMP:BTCUSD", "title": "BTC/USD" },
+          { "proName": "TVC:GOLD", "title": "Gold" },
+          { "proName": "TVC:SILVER", "title": "Silver" },
+          { "proName": "FX_IDC:EURUSD", "title": "EUR/USD" },
+          { "proName": "FX_IDC:GBPUSD", "title": "GBP/USD" }
+        ],
+        "showSymbolLogo": true,
+        "isTransparent": true,
+        "displayMode": "adaptive",
+        "colorTheme": "dark",
+        "locale": "en"
       }
+      </script>
+    </div>
+  </div>
 
-      grid.innerHTML = html;
-      document.getElementById('lastUpdated').innerText = 'LIVE • ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    }
+  <!-- Main Grid Layout -->
+  <div class="deck-grid">
 
-    function filterNews() {
-      const input = document.getElementById('searchInput').value.toLowerCase();
-      document.querySelectorAll('.news-card').forEach(card => {
-        card.style.display = card.innerText.toLowerCase().includes(input) ? 'block' : 'none';
-      });
-    }
+    <!-- Column 1: Live Real-Time Financial News Stream -->
+    <div class="widget-container">
+      <div class="tradingview-widget-container" style="height:100%; width:100%;">
+        <div class="tradingview-widget-container__widget" style="height:100%; width:100%;"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
+        {
+          "feedMode": "all_symbols",
+          "isTransparent": true,
+          "displayMode": "regular",
+          "width": "100%",
+          "height": "100%",
+          "colorTheme": "dark",
+          "locale": "en"
+        }
+        </script>
+      </div>
+    </div>
 
-    fetchPrices();
-    fetchFeeds();
+    <!-- Column 2: Live Market Overview (Indexes, Metals, Crypto) -->
+    <div class="widget-container">
+      <div class="tradingview-widget-container" style="height:100%; width:100%;">
+        <div class="tradingview-widget-container__widget" style="height:100%; width:100%;"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+        {
+          "colorTheme": "dark",
+          "dateRange": "1D",
+          "showChart": true,
+          "locale": "en",
+          "width": "100%",
+          "height": "100%",
+          "largeChartUrl": "",
+          "isTransparent": true,
+          "showSymbolLogo": true,
+          "showFloatingTooltip": false,
+          "tabs": [
+            {
+              "title": "Commodities & Forex",
+              "symbols": [
+                { "s": "TVC:GOLD", "d": "Gold" },
+                { "s": "TVC:SILVER", "d": "Silver" },
+                { "s": "FX_IDC:EURUSD", "d": "EUR/USD" },
+                { "s": "FX_IDC:GBPUSD", "d": "GBP/USD" }
+              ]
+            },
+            {
+              "title": "Crypto",
+              "symbols": [
+                { "s": "BITSTAMP:BTCUSD", "d": "Bitcoin" },
+                { "s": "BITSTAMP:ETHUSD", "d": "Ethereum" }
+              ]
+            }
+          ]
+        }
+        </script>
+      </div>
+    </div>
 
-    setInterval(fetchFeeds, 60000);
-    setInterval(fetchPrices, 30000);
-  </script>
+  </div>
+
 </body>
 </html>
