@@ -56,6 +56,7 @@
     button:hover { background: #334155; }
     .btn-alert { border-color: var(--alert); color: var(--alert); }
     .btn-alert:hover { background: rgba(245, 158, 11, 0.1); }
+    .btn-reset { border-color: #f87171; color: #f87171; }
     .deck-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
@@ -109,10 +110,11 @@
       <small id="lastUpdated" style="color: var(--muted);"></small>
     </div>
     <div class="controls">
-      <input type="text" id="searchInput" placeholder="Filter headlines (Fed, Jobs, AAPL)..." onkeyup="filterNews()">
+      <input type="text" id="searchInput" placeholder="Filter headlines (Fed, Rate, AAPL)..." onkeyup="filterNews()">
       <input type="text" id="alertKeywords" placeholder="Alert keywords (e.g. Fed, Rate, Earnings)..." onchange="saveAlertKeywords()">
       <button class="btn-alert" onclick="enableNotifications()">🔔 Enable Alerts</button>
       <button onclick="toggleModal('addModal')">➕ Add Source</button>
+      <button class="btn-reset" onclick="resetToDefaults()">🧹 Reset Feeds</button>
       <button onclick="fetchFeeds()">🔄 Refresh</button>
     </div>
   </header>
@@ -130,37 +132,40 @@
   <div class="deck-grid" id="deckGrid"></div>
 
   <script>
-    // Preset high-value feeds (Includes BLS Employment, SEC 10-Q, Fed, Markets)
-   const defaultSources = [
-  { category: "Markets & Business", url: "https://feeds.a.dj.com/rss/WSJcomUSBusiness.xml" },
-  { category: "Employment & Jobs (BLS)", url: "https://www.bls.gov/feed/empsit.rss" },
-  { category: "SEC 10-Q Filings", url: "https://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent&type=10-Q&count=40&output=atom" },
-  { category: "Fed Policy", url: "https://www.federalreserve.gov/feeds/press_all.xml" },
-  { category: "Tech & Equities", url: "https://seekingalpha.com/sector/technology.xml" },
-  { category: "Big Tech News", url: "https://techcrunch.com/feed/" },
-  { category: "Crypto & Markets", url: "https://www.coindesk.com/arc/outboundfeeds/rss/" },
-  { category: "Energy & Oil", url: "https://oilprice.com/rss/main" },
-  { category: "Precious Metals", url: "https://www.kitco.com/rss/news.xml" },
-  { category: "Venture & Deals", url: "https://pitchbook.com/news/rss" }
-];
+    // Bulletproof list of high-reliability, open RSS feeds
+    const defaultSources = [
+      { category: "CNBC Business & Markets", url: "https://www.cnbc.com/id/100003114/device/rss/rss.html" },
+      { category: "NYT Business & Tech", url: "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml" },
+      { category: "Wall Street Journal", url: "https://feeds.a.dj.com/rss/WSJcomUSBusiness.xml" },
+      { category: "CNBC Economy & Jobs", url: "https://www.cnbc.com/id/20910258/device/rss/rss.html" },
+      { category: "TechCrunch (Big Tech)", url: "https://techcrunch.com/feed/" },
+      { category: "Yahoo Finance", url: "https://finance.yahoo.com/news/rssindex" }
+    ];
 
     const seenItems = new Set();
 
     function getSources() {
-      const saved = localStorage.getItem('deck_sources_v3');
+      const saved = localStorage.getItem('deck_sources_v10');
       return saved ? JSON.parse(saved) : defaultSources;
     }
 
     function saveSources(sources) {
-      localStorage.setItem('deck_sources_v2', JSON.stringify(sources));
+      localStorage.setItem('deck_sources_v10', JSON.stringify(sources));
+    }
+
+    function resetToDefaults() {
+      if (confirm("Reset all feeds back to the default working sources?")) {
+        localStorage.removeItem('deck_sources_v10');
+        fetchFeeds();
+      }
     }
 
     function saveAlertKeywords() {
-      localStorage.setItem('deck_alerts_v2', document.getElementById('alertKeywords').value);
+      localStorage.setItem('deck_alerts_v10', document.getElementById('alertKeywords').value);
     }
 
     function loadAlertKeywords() {
-      const saved = localStorage.getItem('deck_alerts_v2');
+      const saved = localStorage.getItem('deck_alerts_v10');
       if (saved) document.getElementById('alertKeywords').value = saved;
     }
 
@@ -227,15 +232,40 @@
       });
     }
 
+    // Multi-Proxy Robust Parser
     async function loadFeed(url) {
-      const apiPrefix = "https://api.rss2json.com/v1/api.json?rss_url=";
+      // Proxy 1: CodeTabs CORS proxy
       try {
-        const res = await fetch(apiPrefix + encodeURIComponent(url));
+        const res = await fetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`);
+        const xmlText = await res.text();
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(xmlText, "text/xml");
+        const items = Array.from(xml.querySelectorAll("item, entry")).slice(0, 15);
+
+        if (items.length > 0) {
+          return items.map(el => {
+            const title = el.querySelector("title") ? el.querySelector("title").textContent : "No Title";
+            let link = "#";
+            const linkEl = el.querySelector("link");
+            if (linkEl) {
+              link = linkEl.getAttribute("href") || linkEl.textContent || "#";
+            }
+            const pubDate = el.querySelector("pubDate, updated") ? el.querySelector("pubDate, updated").textContent : "";
+            return { title, link, pubDate, author: "" };
+          });
+        }
+      } catch (e) {}
+
+      // Proxy 2: RSS2JSON API
+      try {
+        const res = await fetch("https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(url));
         const data = await res.json();
-        return data.items || [];
-      } catch (e) {
-        return [];
-      }
+        if (data.status === 'ok' && data.items && data.items.length > 0) {
+          return data.items;
+        }
+      } catch (e) {}
+
+      return [];
     }
 
     async function fetchFeeds() {
@@ -267,7 +297,6 @@
         items.forEach(item => {
           const pubDate = item.pubDate ? new Date(item.pubDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
           
-          // Generate publisher favicon automatically
           let domain = "news";
           try { domain = new URL(item.link).hostname.replace('www.', ''); } catch(e){}
           const iconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
@@ -305,8 +334,8 @@
     loadAlertKeywords();
     fetchFeeds();
 
-    // Auto-refresh every 5 minutes (300,000 ms)
-    setInterval(fetchFeeds, 300000);
+    // Auto-refresh every 30 seconds
+    setInterval(fetchFeeds, 30000);
   </script>
 </body>
 </html>
